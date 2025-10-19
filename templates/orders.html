@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<h3>Orders</h3>
+<table class="table table-striped">
+  <thead><tr>
+    <th>#</th><th>Customer</th><th>Item</th><th>Total</th><th>Paid</th><th>Pending</th><th>Status</th><th>Date</th><th>Actions</th>
+  </tr></thead>
+  <tbody>
+  {% for o in orders %}
+    <tr>
+      <td>{{ o.id }}</td>
+      <td>{{ o.customer_name }}<br><small>{{ o.phone }}</small></td>
+      <td>{{ o.item }} x{{ o.quantity }}</td>
+      <td>{{ "%.2f"|format(o.total_amount) }}</td>
+      <td>{{ "%.2f"|format(o.paid_amount) }}</td>
+      <td>{{ "%.2f"|format(o.pending_amount) }}</td>
+      <td>{{ o.status }}</td>
+      <td>{{ o.created_at.strftime('%Y-%m-%d') }}</td>
+      <td>
+        <a class="btn btn-sm btn-primary" href="{{ url_for('invoice', order_id=o.id) }}" target="_blank">Invoice</a>
+        <a class="btn btn-sm btn-secondary" href="{{ url_for('edit_order', order_id=o.id) }}">Edit</a>
+        <form style="display:inline" method="post" action="{{ url_for('delete_order', order_id=o.id) }}">
+          <button onclick="return confirm('Delete?')" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+        {% if o.status=='pending' %}
+          <a class="btn btn-sm btn-success" href="{{ url_for('mark_order', order_id=o.id, state='completed') }}">Mark Completed</a>
+        {% else %}
+          <a class="btn btn-sm btn-warning" href="{{ url_for('mark_order', order_id=o.id, state='pending') }}">Mark Pending</a>
+        {% endif %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="9">No orders yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

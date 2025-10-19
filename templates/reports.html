@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h3>Reports</h3>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-auto">
+    <label>Filter by month (YYYY-MM)</label>
+    <input name="month" class="form-control" placeholder="2025-10">
+  </div>
+  <div class="col-auto">
+    <label>Filter by date (YYYY-MM-DD)</label>
+    <input name="date" class="form-control" placeholder="2025-10-19">
+  </div>
+  <div class="col-auto align-self-end">
+    <button class="btn btn-primary">Apply</button>
+  </div>
+</form>
+
+<div class="mb-3">
+  <strong>Total Sales:</strong> {{ "%.2f"|format(total_sales) }} &nbsp;
+  <strong>Total Paid:</strong> {{ "%.2f"|format(total_paid) }} &nbsp;
+  <strong>Total Pending:</strong> {{ "%.2f"|format(total_pending) }}
+</div>
+
+<h5>Daily Summary</h5>
+<table class="table">
+  <thead><tr><th>Date</th><th>Orders</th><th>Total Sales</th><th>Total Paid</th></tr></thead>
+  <tbody>
+  {% for day, cnt, sum_total, sum_paid in per_day %}
+    <tr>
+      <td>{{ day }}</td>
+      <td>{{ cnt }}</td>
+      <td>{{ "%.2f"|format(sum_total or 0) }}</td>
+      <td>{{ "%.2f"|format(sum_paid or 0) }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="4">No data</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h5>Orders</h5>
+<table class="table">
+  <thead><tr><th>#</th><th>Customer</th><th>Total</th><th>Paid</th><th>Pending</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for o in orders %}
+    <tr>
+      <td>{{ o.id }}</td>
+      <td>{{ o.customer_name }}</td>
+      <td>{{ "%.2f"|format(o.total_amount) }}</td>
+      <td>{{ "%.2f"|format(o.paid_amount) }}</td>
+      <td>{{ "%.2f"|format(o.pending_amount) }}</td>
+      <td>{{ o.status }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6">No orders</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
